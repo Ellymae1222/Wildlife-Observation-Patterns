@@ -1,0 +1,208 @@
+---
+title: "Wildlife Observation Patterns and Elevation"
+author: "ELLY LEBLANC"
+date: "2026-11-24"
+output: html_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+load("data/shinydemodata.RData")
+```
+
+
+
+# Introduction
+
+Wildlife observations can help researchers understand where different
+species are recorded and how observation patterns vary across seasons
+and elevations. This project explores wildlife observation data from
+Rocky Mountain National Park.
+
+The dataset includes observations of three species: Elk,
+Yellow-bellied Marmot, and Western Tiger Salamander. It includes the
+year, month, observation type, geographic location, and elevation
+associated with each record.
+
+# Research Questions
+
+This project addresses three questions:
+
+1. How do observation counts differ among the three species?
+2. How do recorded observations vary over time?
+3. How do elevation and seasonal observation patterns differ among
+   species?
+
+# Data and Methods
+
+The analysis uses the wildlife observation dataset provided with the
+course project materials. The dataset contains 4,097 records covering
+1940 through 2023.
+
+The analysis compares observation counts by species, year, and month.
+It also examines the average recorded elevation for each species.
+
+These records represent reported observations, not direct estimates
+of wildlife population size. Differences in reporting and data
+collection over time may influence the patterns.
+
+
+
+# Results
+
+## Wildlife Observations by Species
+
+The dataset contains 4,097 wildlife observations across three species.
+Elk account for 1,822 observations, Yellow-bellied Marmots account
+for 1,722, and Western Tiger Salamanders account for 553.
+
+
+
+```{r species-counts}
+species_counts <- table(occ$Species)
+species_counts
+```
+
+## Species Observation Count Chart
+
+
+```{r species-bar-chart}
+library(ggplot2)
+
+ggplot(occ, aes(x = Species, fill = Species)) +
+  geom_bar() +
+  labs(
+    title = "Wildlife Observations by Species",
+    x = "Species",
+    y = "Number of Observations"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+The results show that Elk had the highest number of recorded observations
+(1,822), followed closely by Yellow-bellied Marmots (1,722).
+Western Tiger Salamanders had the fewest recorded observations (553).
+
+
+## Wildlife Observations Over Time
+
+The number of recorded wildlife observations varies across years.
+This section examines how observation records changed from 1940 to 2023.
+
+```{r observations-over-time}
+annual_counts <- as.data.frame(table(occ$year))
+
+names(annual_counts) <- c("year", "observations")
+
+annual_counts$year <- as.numeric(as.character(annual_counts$year))
+
+ggplot(annual_counts, aes(x = year, y = observations)) +
+  geom_line() +
+  geom_point() +
+  labs(
+    title = "Wildlife Observations Over Time",
+    x = "Year",
+    y = "Number of Observations"
+  ) +
+  theme_minimal()
+```
+
+
+
+
+
+
+## Seasonal Wildlife Observation Patterns
+
+Wildlife observations vary by month and species. This section compares
+the number of recorded observations for each species throughout the year.
+
+
+```{r seasonal-patterns}
+ggplot(occ, aes(x = month, fill = Species)) +
+  geom_bar(position = "dodge") +
+  labs(
+    title = "Monthly Wildlife Observations by Species",
+    x = "Month",
+    y = "Number of Observations",
+    fill = "Species"
+  ) +
+  scale_x_continuous(breaks = 1:12) +
+  theme_minimal()
+```
+
+
+
+
+
+
+
+## Average Elevation by Species
+
+Different wildlife species may be recorded at different elevations.
+This section compares the average recorded elevation for each species.
+
+
+```{r elevation-comparison}
+elevation_summary <- aggregate(
+  elevation ~ Species,
+  data = occ,
+  FUN = mean,
+  na.rm = TRUE
+)
+
+ggplot(elevation_summary, aes(x = Species, y = elevation, fill = Species)) +
+  geom_col() +
+  labs(
+    title = "Average Recorded Elevation by Species",
+    x = "Species",
+    y = "Average Elevation (meters)"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+
+
+# Discussion and Limitations
+
+The results show differences in recorded observations among the three
+species. Elk had the highest number of records, followed closely by
+Yellow-bellied Marmots, while Western Tiger Salamanders had fewer
+records.
+
+Observation patterns also varied by month. Elk observations were most
+frequent in June, while Yellow-bellied Marmot and Western Tiger
+Salamander observations were most frequent in July.
+
+Average recorded elevation also differed among species. Yellow-bellied Marmots had the highest average recorded elevation at approximately 3,300 meters, followed by Elk at approximately 2,644 meters. Western Tiger Salamanders had the lowest average recorded elevation at approximately 2,330 meters. These differences show that the three species were recorded at different average elevations.
+
+
+These results should be interpreted with caution. The number of
+observations does not directly measure wildlife population size.
+Changes in reporting, monitoring, and data collection over time may
+influence the patterns. The analysis describes recorded observations
+rather than the actual abundance of each species.
+
+
+
+
+# Conclusion
+
+This project explored wildlife observation patterns for Elk,
+Yellow-bellied Marmots, and Western Tiger Salamanders in Rocky
+Mountain National Park.
+
+The analysis identified differences in observation counts,
+seasonal patterns, and average recorded elevation among the
+three species. These findings demonstrate how data analysis
+can help describe wildlife observation patterns and support
+further ecological research.
+
+Future work could examine additional environmental factors,
+habitat conditions, and monitoring records to better understand
+the patterns observed.
+
+
